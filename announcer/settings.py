@@ -23,11 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*)9piys#$r7kn5nkbq=6#*81o#ol26d(*@wselv=#&u(o$)))a'
 ANNOUNCER_KEY = '9507c39feb542684c868f8d40ecfd0e44da7fa9d1156a1f917d0b4dc1176c647'
 
+VPN_IP = "24.51.233.205"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1', VPN_IP]
 
 
 # Application definition
@@ -87,7 +90,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('127.0.0.1', 8394)],
+            'hosts': [(VPN_IP, 8394)],
         },
     },
 }
