@@ -19,18 +19,41 @@
             width: 1
             rounded_rectangle: (*self.pos, *self.size, 10)
 
-
-    Label:
-        id: title_label
-        text: ""
-        font_size: "30dp"
-        bold: True
-        color: 0, 0, 0, 1
+    # Header row with title and tag
+    BoxLayout:
+        orientation: 'horizontal'
         size_hint_y: None
-        text_size: self.width, None
-        halign: 'left'
-        valign: 'top'
-        height: self.texture_size[1]
+        height: "40dp"
+        spacing: "10dp"
+        
+        Label:
+            id: title_label
+            text: ""
+            font_size: "30dp"
+            bold: True
+            color: 0, 0, 0, 1
+            text_size: self.width, None
+            halign: 'left'
+            valign: 'middle'
+            size_hint_x: 0.9
+            
+        Label:
+            id: tag_label
+            text: ""
+            font_size: "15dp"
+            color: 0.2, 0.2, 0.2, 1
+            size_hint_x: 0.1
+            text_size: self.width, None
+            halign: 'center'
+            text_align: 'center'
+            valign: 'middle'
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.9, 0.9, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [25]
 
     Label:
         id: description_label
@@ -43,12 +66,27 @@
         valign: 'top'
         height: self.texture_size[1]
 
+    # Origin label with distinctive styling
+    Label:
+        id: origin_label
+        text: ""
+        font_size: "12dp"
+        color: 0.4, 0.4, 0.8, 1  # Blue-ish color to make it stand out
+        size_hint_y: None
+        text_size: self.width, None
+        halign: 'left'
+        valign: 'top'
+        height: self.texture_size[1]
+        bold: True  # Make it bold to be more noticeable
+        padding: 0, 5, 0, 5  # Add some padding
+
     Label:
         id: date_label
         text: ""
-        font_size: 12
+        font_size: "12dp"
         color: 0, 0, 0, 1
         size_hint_y: None
+        size_hint_x: 1
         text_size: self.width, None
         halign: 'left'
         valign: 'top'
@@ -84,21 +122,21 @@
             height: self.minimum_height
             spacing: 10
 
-    Button:
-        text: 'Refresh Announcements'
-        size_hint_y: None
-        height: 50
-        background_normal: ''
-        background_color: 0.9, 0.3, 0.3, 0
-        color: 1, 1, 1, 1
-        font_size: "24dp"
-        bold: True
-        canvas.before:
-            Color:
-                rgba: 0.9, 0.3, 0.3, 1
-            RoundedRectangle:
-                pos: self.pos
-                size: self.size
-                radius: [25]
-        on_press: root.refresh_announcements()
+    # Button:
+    #     text: 'Refresh Announcements'
+    #     size_hint_y: None
+    #     height: 50
+    #     background_normal: ''
+    #     background_color: 0.9, 0.3, 0.3, 0
+    #     color: 1, 1, 1, 1
+    #     font_size: "24dp"
+    #     bold: True
+    #     canvas.before:
+    #         Color:
+    #             rgba: 0.9, 0.3, 0.3, 1
+    #         RoundedRectangle:
+    #             pos: self.pos
+    #             size: self.size
+    #             radius: [25]
+    #     on_press: root.refresh_announcements()
 
