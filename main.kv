@@ -93,50 +93,101 @@
         height: self.texture_size[1]
 
 <AnnouncementScreen>:
-    orientation: 'vertical'
-    padding: "10dp"
-    spacing: "10dp"
+    BoxLayout:
+        orientation: 'vertical'
+        padding: "10dp"
+        spacing: "10dp"
 
-    canvas.before:
-        Color:
-            rgba: 1, 1, 1, 1  # Whole background white
-        Rectangle:
-            pos: self.pos
-            size: self.size
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # Whole background white
+            Rectangle:
+                pos: self.pos
+                size: self.size
 
-    Label:
-        text: 'School Announcements'
-        font_size: "40dp"
-        bold: True
-        size_hint_y: None
-        height: 70
-        padding: 20, 50, 20, 50
-        color: 0, 0, 0, 1
-        size_hint: 1, 0.1
-
-    ScrollView:
-        BoxLayout:
-            id: announcement_layout
-            orientation: 'vertical'
+        Label:
+            text: 'School Announcements'
+            font_size: "40dp"
+            bold: True
             size_hint_y: None
-            height: self.minimum_height
-            spacing: 10
+            height: 70
+            padding: 20, 50, 20, 50
+            color: 0, 0, 0, 1
+            size_hint: 1, 0.1
 
-    # Button:
-    #     text: 'Refresh Announcements'
-    #     size_hint_y: None
-    #     height: 50
-    #     background_normal: ''
-    #     background_color: 0.9, 0.3, 0.3, 0
-    #     color: 1, 1, 1, 1
-    #     font_size: "24dp"
-    #     bold: True
-    #     canvas.before:
-    #         Color:
-    #             rgba: 0.9, 0.3, 0.3, 1
-    #         RoundedRectangle:
-    #             pos: self.pos
-    #             size: self.size
-    #             radius: [25]
-    #     on_press: root.refresh_announcements()
+        ScrollView:
+            BoxLayout:
+                id: announcement_layout
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 10
+
+        Button:
+            text: 'Add Announcement'
+            size_hint_y: None
+            height: 50
+            background_normal: ''
+            background_color: 0.9, 0.3, 0.3, 0
+            color: 1, 1, 1, 1
+            font_size: "24dp"
+            bold: True
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.3, 0.3, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [25]
+            on_press: app.show_add_announcement_screen()
+
+<AddAnnouncementScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: "20dp"
+        spacing: "10dp"
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        
+        Button:
+            text: 'Send Announcement'
+            size_hint: None, None
+            size: "250dp", "50dp"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+            background_normal: ''
+            background_color: 0.2, 0.7, 0.3, 0
+            color: 1, 1, 1, 1
+            font_size: "20dp"
+            bold: True
+            canvas.before:
+                Color:
+                    rgba: 0.2, 0.7, 0.3, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [25]
+            on_press: app.send_announcement()
+        
+        Button:
+            text: 'Go Back'
+            size_hint: None, None
+            size: "200dp", "50dp"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            background_normal: ''
+            background_color: 0.9, 0.3, 0.3, 0
+            color: 1, 1, 1, 1
+            font_size: "20dp"
+            bold: True
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.3, 0.3, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [25]
+            on_press: app.show_announcement_screen()
 
