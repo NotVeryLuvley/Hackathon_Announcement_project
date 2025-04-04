@@ -92,6 +92,95 @@
         valign: 'top'
         height: self.texture_size[1]
 
+<LoginScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: "20dp"
+        spacing: "20dp"
+        
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: 100
+            padding: 20, 10, 20, 10
+            
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.3, 0.3, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10]
+            
+            Label:
+                text: 'School Announcements'
+                font_size: "40dp"
+                bold: True
+                color: 1, 1, 1, 1
+                size_hint: 1, 1
+                text_size: self.width, None
+                halign: 'center'
+                valign: 'middle'
+        
+        Label:
+            text: 'Select User Type'
+            font_size: "30dp"
+            bold: True
+            color: 0, 0, 0, 1
+            size_hint_y: None
+            height: 50
+            text_size: self.width, None
+            halign: 'center'
+            valign: 'middle'
+        
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: "20dp"
+            padding: "20dp"
+            
+            Button:
+                text: 'Admin'
+                size_hint_y: None
+                height: 60
+                background_normal: ''
+                background_color: 0.9, 0.3, 0.3, 0
+                color: 1, 1, 1, 1
+                font_size: "24dp"
+                bold: True
+                canvas.before:
+                    Color:
+                        rgba: 0.9, 0.3, 0.3, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [25]
+                on_press: app.login_as_admin()
+            
+            Button:
+                text: 'Student'
+                size_hint_y: None
+                height: 60
+                background_normal: ''
+                background_color: 0.3, 0.6, 0.9, 0
+                color: 1, 1, 1, 1
+                font_size: "24dp"
+                bold: True
+                canvas.before:
+                    Color:
+                        rgba: 0.3, 0.6, 0.9, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [25]
+                on_press: app.login_as_student()
+
 <AnnouncementScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -105,15 +194,29 @@
                 pos: self.pos
                 size: self.size
 
-        Label:
-            text: 'School Announcements'
-            font_size: "40dp"
-            bold: True
+        BoxLayout:
+            orientation: 'vertical'
             size_hint_y: None
             height: 70
-            padding: 20, 50, 20, 50
-            color: 0, 0, 0, 1
-            size_hint: 1, 0.1
+            padding: 20, 10, 20, 10
+            
+            canvas.before:
+                Color:
+                    rgba: 0.9, 0.3, 0.3, 1  # Red background to match buttons
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10]
+            
+            Label:
+                text: 'School Announcements'
+                font_size: "40dp"
+                bold: True
+                color: 1, 1, 1, 1  # White text
+                size_hint: 1, 1
+                text_size: self.width, None
+                halign: 'center'
+                valign: 'middle'
 
         ScrollView:
             BoxLayout:
@@ -124,6 +227,7 @@
                 spacing: 10
 
         Button:
+            id: add_announcement_button
             text: 'Add Announcement'
             size_hint_y: None
             height: 50
@@ -146,6 +250,7 @@
         orientation: 'vertical'
         padding: "20dp"
         spacing: "10dp"
+        
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
