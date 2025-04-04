@@ -17,7 +17,6 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
             data = json.loads(text_data)
             title = data.get("title", "No Title")
             desc = data.get("desc", "No Description")
-            date = data.get("date", "No Date")
             tag = data.get("tag", "No Tag")
             msgtype = data.get("msgtype", "No Type")
 
@@ -27,7 +26,6 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
                     "type": "send_message",
                     "title": title,
                     "desc": desc,
-                    "date": date,
                     "tag": tag,
                     "msgtype": msgtype,
                 }
@@ -38,7 +36,6 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "title": event.get("title", ""),
             "desc": event.get("desc", ""),
-            "date": event.get("date", ""),
             "tag": event.get("tag", ""),
             "msgtype": event.get("msgtype", "")
         }))

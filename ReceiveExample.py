@@ -10,7 +10,6 @@ async def websocket_client():
         print(response)
         print(f"Title: {response['title']}")
         print(f"Description: {response['desc']}")
-        print(f"Date: {response['date']}")
         print(f"Tag: {response['tag']}")
         print(f"Msgtype: {response['msgtype']}")
 
