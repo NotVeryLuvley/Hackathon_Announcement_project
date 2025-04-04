@@ -18,7 +18,7 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
             title = data.get("title", "No Title")
             desc = data.get("desc", "No Description")
             tag = data.get("tag", "No Tag")
-            msgtype = data.get("msgtype", "No Type")
+            origin = data.get("origin", "No Type")
 
             await self.channel_layer.group_send(
                 "announcements",
@@ -27,7 +27,7 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
                     "title": title,
                     "desc": desc,
                     "tag": tag,
-                    "msgtype": msgtype,
+                    "origin": origin,
                 }
             )
         except json.JSONDecodeError:
@@ -37,5 +37,5 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
             "title": event.get("title", ""),
             "desc": event.get("desc", ""),
             "tag": event.get("tag", ""),
-            "msgtype": event.get("msgtype", "")
+            "origin": event.get("origin", "")
         }))
