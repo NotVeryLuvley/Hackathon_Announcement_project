@@ -1,4 +1,5 @@
 import kivy
+import threading
 kivy.require('2.0.0')  # Specify the minimum Kivy version required
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -54,46 +55,52 @@ class AnnouncementScreen(Screen):
         super().__init__(**kwargs)
 
         self.announcements = [
-            ("School Closure", "School wilsdfdsfs fs f dsf ds fds fd f df dv sd vsdvdsvdsfdsf ds fds l be closed on Friday due to weather conditions.", "2025-04-01", "Important", "School Board"),
+            ("School Closure", "School will be closed on Friday due to weather conditions.", "2025-04-01", "Important", "School Board"),
             ("Parent-Teacher Meeting", "Meeting scheduled for next Wednesday.", "2025-03-30", "Event", "Student Council"),
-            ("Cafeteria Menu", "New menu has been updated on the school website.", "2025-03-28", "hel from the oter side", "Computer Science"),
+            ("Cafeteria Menu", "New menu has been updated on the school website.", "2025-03-28", "Notice", "Computer Science"),
             ("Science Fair Reminder", "Submissions due by next Monday.", "2025-03-25", "Reminder", "Event")
         ]
 
-        print(self.announcements)
-
         self.load_announcements()
-        
-        # Schedule automatic refresh every 3 seconds
-        Clock.schedule_interval(self.auto_refresh, 3.0)  # 3.0 seconds interval
+
+        # Start WebSocket listener in background thread
+        threading.Thread(target=self.start_websocket_listener, daemon=True).start()
 
     def load_announcements(self):
         self.ids.announcement_layout.clear_widgets()
         for title, description, date, tag, origin in reversed(self.announcements):
             self.ids.announcement_layout.add_widget(AnnouncementWidget(title, description, date, tag, origin))
 
-    def refresh_announcements(self):
-        # new_announcement = ("New Announcement", "This is a newly added announcement!", datetime.datetime.now().strftime("%Y-%m-%d %H:%M"), "New", "School Board")
-        # self.announcements.append(new_announcement)
-        # self.ids.announcement_layout.add_widget(AnnouncementWidget(*new_announcement))
+    def add_announcement(self, data):
         try:
-            new_announcement = asyncio.run(receive_announcement())
-            self.title = new_announcement["title"]
-            self.description = new_announcement["desc"]
-            self.date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            self.tag = new_announcement["tag"]
-            self.origin = new_announcement["origin"]
-            new_announcement = (self.title, self.description, self.date, self.tag, self.origin)
+            title = data.get("title", "No Title")
+            description = data.get("desc", "No Description")
+            tag = data.get("tag", "No Tag")
+            origin = data.get("origin", "Unknown")
+            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+            new_announcement = (title, description, date, tag, origin)
             self.announcements.append(new_announcement)
             self.load_announcements()
         except Exception as e:
-            print(f"Error: {e}")
-        
-        
-        
-    def auto_refresh(self, dt):
-        """Function called automatically every 3 seconds"""
-        self.refresh_announcements()
+            print(f"Error adding announcement: {e}")
+
+    def start_websocket_listener(self):
+        asyncio.run(self.websocket_loop())
+
+    async def websocket_loop(self):
+        uri = "ws://127.0.0.1:55356/ws/announce/"
+        while True:
+            try:
+                async with websockets.connect(uri) as websocket:
+                    print("Connected to WebSocket server.")
+                    while True:
+                        message = await websocket.recv()
+                        data = json.loads(message)
+                        Clock.schedule_once(lambda dt: self.add_announcement(data))
+            except Exception as e:
+                print(f"WebSocket error: {e}. Retrying in 3 seconds...")
+                await asyncio.sleep(3)
 
 class AddAnnouncementScreen(Screen):
     def __init__(self, **kwargs):
