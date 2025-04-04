@@ -15,17 +15,30 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
 
         try:
             data = json.loads(text_data)
-            message = data.get('message', '')
+            title = data.get("title", "No Title")
+            desc = data.get("desc", "No Description")
+            date = data.get("date", "No Date")
+            tag = data.get("tag", "No Tag")
+            msgtype = data.get("msgtype", "No Type")
 
-            # Broadcast message
             await self.channel_layer.group_send(
                 "announcements",
                 {
                     "type": "send_message",
-                    "message": message
+                    "title": title,
+                    "desc": desc,
+                    "date": date,
+                    "tag": tag,
+                    "msgtype": msgtype,
                 }
             )
         except json.JSONDecodeError:
             print("Received invalid JSON:", text_data)
     async def send_message(self, event):
-        await self.send(text_data=json.dumps({"message": event["message"]}))
+        await self.send(text_data=json.dumps({
+            "title": event.get("title", ""),
+            "desc": event.get("desc", ""),
+            "date": event.get("date", ""),
+            "tag": event.get("tag", ""),
+            "msgtype": event.get("msgtype", "")
+        }))
