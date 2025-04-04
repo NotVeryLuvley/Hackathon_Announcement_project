@@ -67,8 +67,8 @@ class AnnouncementScreen(Screen):
 
         self.load_announcements()
         
-        # Schedule automatic refresh every 3 seconds
-        Clock.schedule_interval(self.auto_refresh, 3.0)  # 3.0 seconds interval
+        # Start WebSocket listener in background thread
+        threading.Thread(target=self.start_websocket_listener, daemon=True).start()
 
     def load_announcements(self):
         self.ids.announcement_layout.clear_widgets()
