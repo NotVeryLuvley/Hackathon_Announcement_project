@@ -17,22 +17,28 @@ import asyncio
 import websockets
 import json
 # {"title": input("What is the title?: "), "desc": input("What is the description?: "), "tag": input("What is the tag?: "), "msgtype": input("What type of message is this?: ")}
-async def send_announcement():
+# Have a way to get data from adding announcements
+async def send_announcement(title, description, tag, origin):
     uri = "ws://127.0.0.1:55356/ws/announce/" #defines the websocket
-    message = json.dumps({"title": "What is the title?: ", "desc": "What is the description?: ", "tag": "What is the tag?: ", "origin": "What type of message is this?: "}) #change the input date to a way to get the date from the os on android
+    message = json.dumps({
+        "title": title, 
+        "desc": description, 
+        "tag": tag, 
+        "origin": origin
+    }) #change the input date to a way to get the date from the os on android
     async with websockets.connect(uri) as websocket: #waits until it connects with the websocket
         await websocket.send(message) # sends the message
         # print(f"Sent: {message}")
 
 
+# Get the announcements
+# async def receive_announcement():
+#     uri = "ws://127.0.0.1:55356/ws/announce/" #defines the websocket
+#     async with websockets.connect(uri) as websocket: #waits until it connects with the websocket
 
-async def receive_announcement():
-    uri = "ws://127.0.0.1:55356/ws/announce/" #defines the websocket
-    async with websockets.connect(uri) as websocket: #waits until it connects with the websocket
-
-        response = json.loads(await websocket.recv()) #waits until it gets a message from the server
+#         response = json.loads(await websocket.recv()) #waits until it gets a message from the server
         
-        return response
+#         return response
     
 
 #     asyncio.run(websocket_client())
@@ -41,7 +47,7 @@ async def receive_announcement():
 Builder.load_file("main.kv")
 
 
-class AnnouncementWidget(BoxLayout):  # Changed from RelativeLayout
+class AnnouncementWidget(BoxLayout):
     def __init__(self, title, description, date, tag, origin, **kwargs):
         super().__init__(**kwargs)
         self.ids.title_label.text = title
@@ -50,6 +56,11 @@ class AnnouncementWidget(BoxLayout):  # Changed from RelativeLayout
         self.ids.tag_label.text = tag
         self.ids.origin_label.text = "From: " + origin
 
+class LoginScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+#Main loop
 class AnnouncementScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -62,7 +73,7 @@ class AnnouncementScreen(Screen):
         ]
 
         self.load_announcements()
-
+        
         # Start WebSocket listener in background thread
         threading.Thread(target=self.start_websocket_listener, daemon=True).start()
 
@@ -106,24 +117,61 @@ class AddAnnouncementScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+#Main Loop
 class AnnouncementApp(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.is_admin = False
+    
     def build(self):
         # Create a screen manager
         sm = ScreenManager()
         
         # Add screens to the manager
+        sm.add_widget(LoginScreen(name='login'))
         sm.add_widget(AnnouncementScreen(name='announcements'))
         sm.add_widget(AddAnnouncementScreen(name='add_announcement'))
         
         return sm
     
+    def login_as_admin(self):
+        self.is_admin = True
+        self.show_announcement_screen()
+    
+    def login_as_student(self):
+        self.is_admin = False
+        self.show_announcement_screen()
+    
     def show_add_announcement_screen(self):
         # Switch to the add announcement screen
         self.root.current = 'add_announcement'
 
-    def send_announcement(self):
+    def setup_announcement(self):
         try:
-            (asyncio.run(send_announcement()))
+            # Get the input values from the text fields
+            add_screen = self.root.get_screen('add_announcement')
+            title = add_screen.ids.title_input.text
+            description = add_screen.ids.description_input.text
+            tag = add_screen.ids.tag_input.text
+            origin = add_screen.ids.origin_input.text
+            
+            # Check if any field is empty
+            if not title or not description or not tag or not origin:
+                print("All fields must be filled out")
+                return
+            
+            
+            asyncio.run(send_announcement(title, description, tag, origin))
+
+            self.show_announcement_screen()
+
+            # get rid of inputs
+            add_screen.ids.title_input.text = ""
+            add_screen.ids.description_input.text = ""
+            add_screen.ids.tag_input.text = ""
+            add_screen.ids.origin_input.text = ""
+            
+            
         except Exception as e:
             print(f"Error: {e}")
 
@@ -131,6 +179,18 @@ class AnnouncementApp(App):
         # Switch back to the announcement screen
         self.root.current = 'announcements'
 
-if __name__ == '__main__':
-    AnnouncementApp().run()
+        self.root.get_screen('add_announcement').ids.title_input.text = ""
+        self.root.get_screen('add_announcement').ids.description_input.text = ""
+        self.root.get_screen('add_announcement').ids.tag_input.text = ""
+        self.root.get_screen('add_announcement').ids.origin_input.text = ""
+        
+        # Show or hide the add announcement button based on admin or student
+        announcement_screen = self.root.get_screen('announcements')
+        if self.is_admin:
+            announcement_screen.ids.add_announcement_button.opacity = 1
+            announcement_screen.ids.add_announcement_button.disabled = False
+        else:
+            announcement_screen.ids.add_announcement_button.opacity = 0
+            announcement_screen.ids.add_announcement_button.disabled = True
 
+AnnouncementApp().run()

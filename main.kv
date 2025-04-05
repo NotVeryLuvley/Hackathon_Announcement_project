@@ -8,13 +8,13 @@
 
     canvas.before:
         Color:
-            rgba: 0.95, 0.95, 0.95, 1  # White background
+            rgba: 0.95, 0.95, 0.95, 1 
         RoundedRectangle:
             pos: self.pos
             size: self.size
             radius: [10]
         Color:
-            rgba: 0, 0, 0, 0.1  # Light grey border
+            rgba: 0, 0, 0, 0.1  
         Line:
             width: 1
             rounded_rectangle: (*self.pos, *self.size, 10)
@@ -129,21 +129,24 @@
                 halign: 'center'
                 valign: 'middle'
         
-        Label:
-            text: 'Select User Type'
-            font_size: "30dp"
-            bold: True
-            color: 0, 0, 0, 1
-            size_hint_y: None
-            height: 50
-            text_size: self.width, None
-            halign: 'center'
-            valign: 'middle'
+        Widget:
+            size_hint_y: 0.3
         
         BoxLayout:
             orientation: 'vertical'
             spacing: "20dp"
             padding: "20dp"
+            
+            Label:
+                text: 'Select User Type'
+                font_size: "30dp"
+                bold: True
+                color: 0, 0, 0, 1
+                size_hint_y: None
+                height: 50
+                text_size: self.width, None
+                halign: 'center'
+                valign: 'middle'
             
             Button:
                 text: 'Admin'
@@ -249,7 +252,7 @@
     BoxLayout:
         orientation: 'vertical'
         padding: "20dp"
-        spacing: "10dp"
+        spacing: "15dp"
         
         canvas.before:
             Color:
@@ -258,41 +261,156 @@
                 pos: self.pos
                 size: self.size
         
-        Button:
-            text: 'Send Announcement'
-            size_hint: None, None
-            size: "250dp", "50dp"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-            background_normal: ''
-            background_color: 0.2, 0.7, 0.3, 0
-            color: 1, 1, 1, 1
-            font_size: "20dp"
-            bold: True
-            canvas.before:
-                Color:
-                    rgba: 0.2, 0.7, 0.3, 1
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [25]
-            on_press: app.send_announcement()
-        
-        Button:
-            text: 'Go Back'
-            size_hint: None, None
-            size: "200dp", "50dp"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            background_normal: ''
-            background_color: 0.9, 0.3, 0.3, 0
-            color: 1, 1, 1, 1
-            font_size: "20dp"
-            bold: True
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: 70
+            padding: 20, 10, 20, 10
+            
             canvas.before:
                 Color:
                     rgba: 0.9, 0.3, 0.3, 1
                 RoundedRectangle:
                     pos: self.pos
                     size: self.size
-                    radius: [25]
-            on_press: app.show_announcement_screen()
+                    radius: [10]
+            
+            Label:
+                text: 'Add New Announcement'
+                font_size: "30dp"
+                bold: True
+                color: 1, 1, 1, 1
+                size_hint: 1, 1
+                text_size: self.width, None
+                halign: 'center'
+                valign: 'middle'
+        
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: "10dp"
+                padding: "10dp"
+                
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: "10dp"
+                    
+                    Label:
+                        text: 'Title:'
+                        font_size: "18dp"
+                        size_hint_y: None
+                        height: 40
+                        color: 0, 0, 0, 1
+                    
+                    TextInput:
+                        id: title_input
+                        multiline: False
+                        size_hint_y: None
+                        height: 50
+                        font_size: "18dp"
+                        padding: 10, 10, 10, 10
+                        background_color: 0.95, 0.95, 0.95, 1
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                    
+                    Label:
+                        text: 'Description:'
+                        font_size: "18dp"
+                        size_hint_y: None
+                        height: 40
+                        color: 0, 0, 0, 1
+                    
+                    TextInput:
+                        id: description_input
+                        multiline: True
+                        size_hint_y: None
+                        height: 100
+                        font_size: "18dp"
+                        padding: 10, 10, 10, 10
+                        background_color: 0.95, 0.95, 0.95, 1
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                    
+                    Label:
+                        text: 'Tag:'
+                        font_size: "18dp"
+                        size_hint_y: None
+                        height: 40
+                        color: 0, 0, 0, 1
+                    
+                    TextInput:
+                        id: tag_input
+                        multiline: False
+                        size_hint_y: None
+                        height: 50
+                        font_size: "18dp"
+                        padding: 10, 10, 10, 10
+                        background_color: 0.95, 0.95, 0.95, 1
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                    
+                    Label:
+                        text: 'Origin:'
+                        font_size: "18dp"
+                        size_hint_y: None
+                        height: 40
+                        color: 0, 0, 0, 1
+                    
+                    TextInput:
+                        id: origin_input
+                        multiline: False
+                        size_hint_y: None
+                        height: 50
+                        font_size: "18dp"
+                        padding: 10, 10, 10, 10
+                        background_color: 0.95, 0.95, 0.95, 1
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+        
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: "20dp"
+            size_hint_y: None
+            height: 60
+            padding: "10dp"
+            
+            Button:
+                text: 'Send Announcement'
+                size_hint: None, None
+                size: "200dp", "50dp"
+                background_normal: ''
+                background_color: 0.2, 0.7, 0.3, 0
+                color: 1, 1, 1, 1
+                font_size: "20dp"
+                bold: True
+                canvas.before:
+                    Color:
+                        rgba: 0.2, 0.7, 0.3, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [25]
+                on_press: app.setup_announcement()
+            
+            Button:
+                text: 'Go Back'
+                size_hint: None, None
+                size: "200dp", "50dp"
+                background_normal: ''
+                background_color: 0.9, 0.3, 0.3, 0
+                color: 1, 1, 1, 1
+                font_size: "20dp"
+                bold: True
+                canvas.before:
+                    Color:
+                        rgba: 0.9, 0.3, 0.3, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [25]
+                on_press: app.show_announcement_screen()
 
