@@ -1,10 +1,17 @@
 import json
+import os
 from channels.generic.websocket import AsyncWebsocketConsumer
+
+ANNOUNCEMENTS_FILE = "announcements.json" #file to save announcements to
 
 class AnnounceConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("announcements", self.channel_name)
+
+        announcements = self.load_announcements()
+        for ann in announcements:
+            await self.send(text_data=json.dumps(ann))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("announcements", self.channel_name)
@@ -15,6 +22,7 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
 
         try:
             data = json.loads(text_data)
+            self.save_announcement(data)
             title = data.get("title", "No Title")
             desc = data.get("desc", "No Description")
             tag = data.get("tag", "No Tag")
@@ -39,3 +47,15 @@ class AnnounceConsumer(AsyncWebsocketConsumer):
             "tag": event.get("tag", ""),
             "origin": event.get("origin", "")
         }))
+
+    def save_announcement(self, data):
+        announcements = self.load_announcements()
+        announcements.append(data)
+        with open(ANNOUNCEMENTS_FILE, "w") as f:
+            json.dump(announcements, f, indent=4)
+
+    def load_announcements(self):
+        if not os.path.exists(ANNOUNCEMENTS_FILE):
+            return []
+        with open(ANNOUNCEMENTS_FILE, "r") as f:
+            return json.load(f)
