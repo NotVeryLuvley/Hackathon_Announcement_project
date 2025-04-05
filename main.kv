@@ -20,7 +20,7 @@
             width: 1
             rounded_rectangle: (*self.pos, *self.size, 10)
 
-    # Header row with title and tag
+    # Header row with title and the tag
     BoxLayout:
         orientation: 'horizontal'
         size_hint_y: None
@@ -67,19 +67,18 @@
         valign: 'top'
         height: self.texture_size[1]
 
-    # Origin label with distinctive styling
     Label:
         id: origin_label
         text: ""
         font_size: "12dp"
-        color: 0.4, 0.4, 0.8, 1  # Blue-ish color to make it stand out
+        color: 0.4, 0.4, 0.8, 1  
         size_hint_y: None
         text_size: self.width, None
         halign: 'left'
         valign: 'top'
         height: self.texture_size[1]
-        bold: True  # Make it bold to be more noticeable
-        padding: 0, 5, 0, 5  # Add some padding
+        bold: True  
+        padding: 0, 5, 0, 5  
 
     Label:
         id: date_label
@@ -194,7 +193,7 @@
 
         canvas.before:
             Color:
-                rgba: 1, 1, 1, 1  # Whole background white
+                rgba: 1, 1, 1, 1 
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -207,7 +206,7 @@
             
             canvas.before:
                 Color:
-                    rgba: 0.9, 0.3, 0.3, 1  # Red background to match buttons
+                    rgba: 0.9, 0.3, 0.3, 1 
                 RoundedRectangle:
                     pos: self.pos
                     size: self.size
