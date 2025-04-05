@@ -2,7 +2,7 @@ import json
 import os
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-ANNOUNCEMENTS_FILE = "announcements.json"
+ANNOUNCEMENTS_FILE = "announcements.json" #file to save announcements to
 
 class AnnounceConsumer(AsyncWebsocketConsumer):
     async def connect(self):
