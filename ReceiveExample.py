@@ -11,7 +11,7 @@ async def websocket_client():
         print(f"Title: {response['title']}")
         print(f"Description: {response['desc']}")
         print(f"Tag: {response['tag']}")
-        print(f"Origin: {response['origin']}")
+        print(f"Origin: {response['msgtype']}")
 
 while True:
     asyncio.run(websocket_client())
