@@ -1,3 +1,4 @@
+# Each specific announcement format
 <AnnouncementWidget@BoxLayout>:
     orientation: 'vertical'
     size_hint_x: 1
@@ -91,6 +92,7 @@
         halign: 'left'
         valign: 'top'
         height: self.texture_size[1]
+
 
 <LoginScreen>:
     BoxLayout:
@@ -210,16 +212,32 @@
                     pos: self.pos
                     size: self.size
                     radius: [10]
+
+            BoxLayout:
+                orientation: 'horizontal'
             
-            Label:
-                text: 'School Announcements'
-                font_size: "40dp"
-                bold: True
-                color: 1, 1, 1, 1  # White text
-                size_hint: 1, 1
-                text_size: self.width, None
-                halign: 'center'
-                valign: 'middle'
+                Label:
+                    text: 'School Announcements'
+                    font_size: "40dp"
+                    bold: True
+                    color: 1, 1, 1, 1
+                    size_hint_x: 0.7
+                    text_align: 'left'
+                    size_hint: 1, 1
+                    text_size: self.width, None
+                    halign: 'center'
+                    valign: 'middle'
+
+                TextInput:
+                    id: search_input
+                    size_hint_x: 0.3
+                    hint_text: "Search by origin..."
+                    text: ""
+                    multiline: False
+                    background_color: 0.95, 0.95, 0.95, 1
+                    foreground_color: 0, 0, 0, 1
+                    cursor_color: 0, 0, 0, 1
+                    on_text: app.search_announcement()
 
         ScrollView:
             BoxLayout:
@@ -301,6 +319,7 @@
                     
                     Label:
                         text: 'Title:'
+                        bold: True
                         font_size: "18dp"
                         size_hint_y: None
                         height: 40
@@ -319,6 +338,7 @@
                     
                     Label:
                         text: 'Description:'
+                        bold: True
                         font_size: "18dp"
                         size_hint_y: None
                         height: 40
@@ -337,6 +357,7 @@
                     
                     Label:
                         text: 'Tag:'
+                        bold: True
                         font_size: "18dp"
                         size_hint_y: None
                         height: 40
@@ -355,6 +376,7 @@
                     
                     Label:
                         text: 'Origin:'
+                        bold: True
                         font_size: "18dp"
                         size_hint_y: None
                         height: 40
@@ -370,6 +392,16 @@
                         background_color: 0.95, 0.95, 0.95, 1
                         foreground_color: 0, 0, 0, 1
                         cursor_color: 0, 0, 0, 1
+
+                    Label:
+                        id: error_label
+                        bold: True
+                        text: "All fields must be filled out"
+                        font_size: "18dp"
+                        size_hint_y: None
+                        height: 40
+                        color: 1, 0, 0
+                        opacity: 0
         
         BoxLayout:
             orientation: 'horizontal'

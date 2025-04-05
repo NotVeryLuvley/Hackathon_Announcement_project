@@ -12,6 +12,7 @@ from kivy.uix.boxlayout import BoxLayout  # Changed from RelativeLayout
 from kivy.clock import Clock  # Add Clock import for scheduling
 from kivy.uix.screenmanager import ScreenManager, Screen
 import datetime
+import time
 
 import asyncio
 import websockets
@@ -25,7 +26,7 @@ async def send_announcement(title, description, tag, origin):
         "desc": description, 
         "tag": tag, 
         "origin": origin
-    }) #change the input date to a way to get the date from the os on android
+    }) 
     async with websockets.connect(uri) as websocket: #waits until it connects with the websocket
         await websocket.send(message) # sends the message
         # print(f"Sent: {message}")
@@ -66,20 +67,57 @@ class AnnouncementScreen(Screen):
         super().__init__(**kwargs)
 
         self.announcements = [
+            ("Science Fair Reminder", "Submissions due by next Monday.", "2025-03-20 12:00", "Reminder", "Schience Club"),
             ("School Closure", "School will be closed on Friday due to weather conditions.", "2025-04-01", "Important", "School Board"),
-            ("Parent-Teacher Meeting", "Meeting scheduled for next Wednesday.", "2025-03-30", "Event", "Student Council"),
-            ("Cafeteria Menu", "New menu has been updated on the school website.", "2025-03-28", "Notice", "Computer Science"),
-            ("Science Fair Reminder", "Submissions due by next Monday.", "2025-03-25", "Reminder", "Event")
+            ("Parent-Teacher Meeting", "Meeting scheduled for next Wednesday.", "2025-03-30", "Event", "School Board"),
+            ("Cafeteria Menu", "New menu has been updated on the school website.", "2025-03-28", "Notice", "Cafeteria")
         ]
 
         self.load_announcements()
         
-        # Start WebSocket listener in background thread
         threading.Thread(target=self.start_websocket_listener, daemon=True).start()
+        
+        check_time_interval = 3600
+        Clock.schedule_interval(self.cleanup_old_announcements, check_time_interval)  # 3600 seconds = 1 hour
 
-    def load_announcements(self):
+    def cleanup_old_announcements(self, dt):
+        #Remove announcements older than 2 weeks
+        current_time = datetime.datetime.now()
+        two_weeks_ago = current_time - datetime.timedelta(days=14)
+        
+        # Filter out announcements older than 2 weeks
+        self.announcements = [
+            announcement for announcement in self.announcements
+            if self._parse_date(announcement[2]) > two_weeks_ago
+        ]
+        
+        # Reload announcements
+        self.load_announcements()
+    
+    def _parse_date(self, date_str):
+        try:
+            return datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M")
+        except ValueError:
+            try:
+                return datetime.datetime.strptime(date_str, "%Y-%m-%d")
+            except ValueError:
+                # if fails, reaturn old date to make sure it works
+                return datetime.datetime(1900, 1, 1)
+
+    def load_announcements(self, search_term=None):
         self.ids.announcement_layout.clear_widgets()
-        for title, description, date, tag, origin in reversed(self.announcements):
+        
+        # Filter announcements based on search term
+        filtered_announcements = self.announcements
+        if search_term and search_term.strip():
+            search_term = search_term.lower()
+            filtered_announcements = [
+                announcement for announcement in self.announcements
+                if search_term in announcement[4].lower()  # Search in origin part
+            ]
+        
+        # Display filtered announcements
+        for title, description, date, tag, origin in reversed(filtered_announcements):
             self.ids.announcement_layout.add_widget(AnnouncementWidget(title, description, date, tag, origin))
 
     def add_announcement(self, data):
@@ -143,7 +181,6 @@ class AnnouncementApp(App):
         self.show_announcement_screen()
     
     def show_add_announcement_screen(self):
-        # Switch to the add announcement screen
         self.root.current = 'add_announcement'
 
     def setup_announcement(self):
@@ -157,12 +194,14 @@ class AnnouncementApp(App):
             
             # Check if any field is empty
             if not title or not description or not tag or not origin:
-                print("All fields must be filled out")
+                # display all fields must be filled out type thing
+                add_screen.ids.error_label.opacity = 1
                 return
             
             
             asyncio.run(send_announcement(title, description, tag, origin))
 
+            add_screen.ids.error_label.opacity = 0
             self.show_announcement_screen()
 
             # get rid of inputs
@@ -174,9 +213,19 @@ class AnnouncementApp(App):
             
         except Exception as e:
             print(f"Error: {e}")
+    
+    def search_announcement(self):
+        # Get the search term from the input field
+        announcement_screen = self.root.get_screen('announcements')
+        search_term = announcement_screen.ids.search_input.text
+        
+        # Reload announcements with that search term
+        announcement_screen.load_announcements(search_term)
 
     def show_announcement_screen(self):
         # Switch back to the announcement screen
+        add_screen = self.root.get_screen('add_announcement')
+        add_screen.ids.error_label.opacity = 0
         self.root.current = 'announcements'
 
         self.root.get_screen('add_announcement').ids.title_input.text = ""
